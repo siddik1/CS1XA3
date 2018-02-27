@@ -1,15 +1,14 @@
 #!/bin/bash
 
-
-function check_status() {
-val= (git status | grep "Your branch is up-to-date")
-
-if [$val == "Your branch is up-to-date"]
+function repo_check() {
+local=$(git rev-parse master)
+remote=$(git rev-parse origin/master)
+if [ $local == $remote ]
 then
-echo "Everything's up to date, good job!"
+echo "Local Repo is up to date with remote repo"
 else
-echo "Uh-oh! You might want to pull/push"
-fi
+echo "Local Repo is not up to date with remote repo"
+fi   
 }
 
 function check_changes() {
@@ -25,19 +24,31 @@ function check_haskellerrors () {
 find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log
 }
 
-
-function jump_directories() {
-lim = $1
-p = $pwd
-for ((i=1; i <= LIMIT; i++))
+function jumpup_directories() {
+LIMIT=$1
+P=$PWD
+for ((i=1; i <= $ans; i++))
 do
-P=$P/..
+    P=$P/..
 done
 cd $P
-
-
-
-
-
+export MPWD=$P
 }
+
+function jumpdown_directories() {
+LIMIT=$1
+P=$MPWD
+for ((i=1; i <= LIMIT; i++))
+do
+    P=${P%/..}
+done
+cd $P
+export MPWD=$P
 }
+
+repo_check
+check_changes
+check_TODO
+check_haskellerrors
+jumpup_directories
+jumpdown_directories
