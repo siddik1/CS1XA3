@@ -24,3 +24,20 @@ $tag > todo.log
 function check_haskellerrors () {
 find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log
 }
+
+
+function jump_directories() {
+lim = $1
+p = $pwd
+for ((i=1; i <= LIMIT; i++))
+do
+P=$P/..
+done
+cd $P
+
+
+
+
+
+}
+}
