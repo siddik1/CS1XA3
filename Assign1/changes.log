@@ -1,0 +1,72 @@
+diff --git a/Assign1/ProjectAnalyze.sh b/Assign1/ProjectAnalyze.sh
+index 301f216..9c09b2a 100755
+--- a/Assign1/ProjectAnalyze.sh
++++ b/Assign1/ProjectAnalyze.sh
+@@ -1,15 +1,14 @@
+ #!/bin/bash
+ 
+-
+-function check_status() {
+-val= (git status | grep "Your branch is up-to-date")
+-
+-if [$val == "Your branch is up-to-date"]
++function repo_check() {
++local=$(git rev-parse master)
++remote=$(git rev-parse origin/master)
++if [ $local == $remote ]
+ then
+-echo "Everything's up to date, good job!"
++echo "Local Repo is up to date with remote repo"
+ else
+-echo "Uh-oh! You might want to pull/push"
+-fi
++echo "Local Repo is not up to date with remote repo"
++fi   
+ }
+ 
+ function check_changes() {
+@@ -25,19 +24,31 @@ function check_haskellerrors () {
+ find -name "*.hs" | xargs -I {} ghc -fno-code {} &> error.log
+ }
+ 
++function jumpup_directories() {
++LIMIT=$1
++P=$PWD
++for ((i=1; i <= $ans; i++))
++do
++    P=$P/..
++done
++cd $P
++export MPWD=$P
++}
+ 
+-function jump_directories() {
+-lim = $1
+-p = $pwd
++function jumpdown_directories() {
++LIMIT=$1
++P=$MPWD
+ for ((i=1; i <= LIMIT; i++))
+ do
+-P=$P/..
++    P=${P%/..}
+ done
+ cd $P
+-
+-
+-
+-
+-
+-}
++export MPWD=$P
+ }
++
++repo_check
++check_changes
++check_TODO
++check_haskellerrors
++jumpup_directories
++jumpdown_directories
+diff --git a/Labs/Bash01/Bash01.hs.enc b/Labs/Bash01/Bash01.hs.enc
+index 5fb0b59..c77c0a6 100644
+Binary files a/Labs/Bash01/Bash01.hs.enc and b/Labs/Bash01/Bash01.hs.enc differ
